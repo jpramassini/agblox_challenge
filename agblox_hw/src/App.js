@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import * as d3 from "d3";
 import Papa from "papaparse";
 import logo from "./logo.svg";
 import "./App.css";
@@ -21,8 +22,13 @@ class App extends Component {
     });
   }
 
-  updateData(res, file) {
-    const data = res.data;
+  updateData(res) {
+    console.log(res);
+    let parseDate = d3.timeParse("%Y-%m-%d %H");
+    let data = res.data.reduce((obj, item) => {
+      obj[parseDate(item.ts)] = item;
+      return obj;
+    });
     this.setState({ data });
     console.log(this.state);
   }
