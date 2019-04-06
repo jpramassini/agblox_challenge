@@ -1,13 +1,16 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
 import Papa from "papaparse";
-import logo from "./logo.svg";
+import ParameterChooser from "./components/parameterChooser";
 import "./App.css";
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      selectedParams: {},
+      color: true
+    };
     this.updateData = this.updateData.bind(this);
   }
 
@@ -25,10 +28,13 @@ class App extends Component {
   updateData(res) {
     console.log(res);
     let parseDate = d3.timeParse("%Y-%m-%d %H");
-    let data = res.data.reduce((obj, item) => {
-      obj[parseDate(item.ts)] = item;
-      return obj;
+    // Convert each ts value to a JS date usable by D3 and native JS functions.
+    let data = res.data.map(item => {
+      let tsOriginal = item.ts;
+      item.ts = parseDate(tsOriginal);
+      return item;
     });
+    console.log(data);
     this.setState({ data });
     console.log(this.state);
   }
@@ -41,19 +47,9 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code> src / App.js </code> and save to reload.{" "}
-          </p>{" "}
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn My Ass{" "}
-          </a>{" "}
+          <h2>AgBlox Data Visualization Challenge</h2>
         </header>{" "}
+        <ParameterChooser data={this.state.data} />
       </div>
     );
   }
