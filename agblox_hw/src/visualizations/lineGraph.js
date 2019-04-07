@@ -1,81 +1,54 @@
 import React, { Component } from "react";
-import * as d3 from "d3";
+import Plot from "react-plotly.js";
 
-const width = 650;
-const height = 400;
+const width = 1000;
+const height = 800;
 const margin = { top: 20, right: 5, bottom: 20, left: 35 };
 const red = "#eb6a5b";
 const blue = "#52b6ca";
 
 class LineGraph extends Component {
-  state = {
-    // svg path command for graph
-    lines: [],
-    // d3 helpers
-    xScale: d3.scaleTime().range([margin.left, width - margin.right]),
-    yScale: d3.scaleLinear().range([height - margin.bottom, margin.top]),
-    lineGenerator: d3.line()
-  };
-
-  xAxis = d3
-    .axisBottom()
-    .scale(this.state.xScale)
-    .tickFormat(d3.timeFormat("%Y-%m-%d %H"));
-  yAxis = d3
-    .axisLeft()
-    .scale(this.state.yScale)
-    .tickFormat(d => `${d}`);
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (!nextProps.data) return null; // data hasn't been loaded yet so do nothing
-    const { data } = nextProps;
-    const { xScale, yScale, lineGenerator } = prevState;
-
-    // data has changed, so recalculate scale domains
-    const timeDomain = d3.extent(data, d => d.ts);
-    const tempMax = d3.max(data, d => d.rel_speed);
-    xScale.domain(timeDomain);
-    yScale.domain([0, tempMax]);
-
-    // calculate lines for all passed values
-    let lines = [];
-    for (var item of nextProps.selectedParams) {
-      lineGenerator.x(d => xScale(d.ts));
-      lineGenerator.y(d => yScale(d[item]));
-      lineGenerator.curve(d3.curveBasis);
-      const lineValues = lineGenerator(data);
-      lines.push(
-        <path
-          d={lineValues}
-          fill="none"
-          stroke={nextProps.monochrome ? "#282c34" : blue}
-          strokeWidth="2"
-          key={item.ts}
-        />
-      );
-    }
-    return { lines };
+  constructor(props) {
+    super(props);
+    this.state = {
+      slicedData: null
+    };
   }
 
-  componentDidUpdate() {
-    console.log(this.state);
-    d3.select(this.refs.xAxis).call(this.xAxis);
-    d3.select(this.refs.yAxis).call(this.yAxis);
+  static getDerivedStateFromProps(props, prevState) {
+    if (!props.data) return null;
+    let slicedData = props.data.slice(0, 100);
+    return { slicedData };
   }
 
   render() {
-    return (
-      <svg width={width} height={height}>
-        {this.state.lines}
-        <g>
-          <g
-            ref="xAxis"
-            transform={`translate(0, ${height - margin.bottom})`}
-          />
-          <g ref="yAxis" transform={`translate(${margin.left}, 0)`} />
-        </g>
-      </svg>
-    );
+    if (this.state.slicedData) {
+      return (
+        <Plot
+          data={[
+            {
+              x: this.state.slicedData.map(item => {
+                return item.time;
+              }),
+              y: this.state.slicedData.map(item => {
+                return item.value;
+              }),
+              type: "line + scatter",
+              mode: "points",
+              marker: { color: this.props.monochrome ? "#282c34" : red }
+            }
+          ]}
+          layout={{
+            width: width,
+            height: height,
+            title: `${this.props.selectedParams[0]}`,
+            displayModeBar: false
+          }}
+        />
+      );
+    } else {
+      return <div />;
+    }
   }
 }
 

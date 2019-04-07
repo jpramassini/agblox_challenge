@@ -9,9 +9,10 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedParams: ["profile_speed"],
+      selectedParams: ["speed_mph"],
       paramNames: [],
-      monochrome: true
+      monochrome: true,
+      splitData: {}
     };
     this.updateData = this.updateData.bind(this);
     this.handleCheck = this.handleCheck.bind(this);
@@ -35,6 +36,19 @@ class App extends Component {
     this.setState({ paramNames });
   }
 
+  splitData() {
+    let splitData = {};
+    for (var item of this.state.data) {
+      for (var name of this.state.paramNames) {
+        if (splitData[name] === undefined) {
+          splitData[name] = [];
+        }
+        splitData[name].push({ time: item.ts, value: item[name] });
+      }
+    }
+    this.setState({ splitData });
+  }
+
   updateData(res) {
     console.log(res);
     let parseDate = d3.timeParse("%Y-%m-%d %H");
@@ -47,6 +61,7 @@ class App extends Component {
     console.log(data);
     this.setState({ data });
     this.setParamNames();
+    this.splitData();
     console.log(this.state);
   }
 
@@ -65,9 +80,9 @@ class App extends Component {
           <h2>AgBlox Data Visualization Challenge</h2>
         </header>{" "}
         <LineGraph
-          data={this.state.data}
-          selectedParams={this.state.selectedParams}
           monochrome={this.state.monochrome}
+          data={this.state.splitData[this.state.selectedParams[0]]}
+          selectedParams={this.state.selectedParams}
         />
         <label>Color</label>
         <input type="checkbox" onChange={this.handleCheck} />
