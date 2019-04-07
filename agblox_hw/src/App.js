@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import * as d3 from "d3";
 import Papa from "papaparse";
 import ParameterChooser from "./components/parameterChooser";
+import LineGraph from "./visualizations/lineGraph";
 import "./App.css";
 
 class App extends Component {
@@ -9,6 +10,7 @@ class App extends Component {
     super(props);
     this.state = {
       selectedParams: {},
+      paramNames: [],
       color: true
     };
     this.updateData = this.updateData.bind(this);
@@ -21,8 +23,15 @@ class App extends Component {
       header: true,
       download: true,
       skipEmptyLines: true,
+      dynamicTyping: true,
       complete: this.updateData
     });
+  }
+
+  setParamNames() {
+    let paramNames = Object.keys(this.state.data[0]);
+    paramNames.shift(); // Pop timestamp off, not hideable by user
+    this.setState({ paramNames });
   }
 
   updateData(res) {
@@ -36,6 +45,7 @@ class App extends Component {
     });
     console.log(data);
     this.setState({ data });
+    this.setParamNames();
     console.log(this.state);
   }
 
@@ -49,7 +59,10 @@ class App extends Component {
         <header className="App-header">
           <h2>AgBlox Data Visualization Challenge</h2>
         </header>{" "}
-        <ParameterChooser data={this.state.data} />
+        <LineGraph
+          data={this.state.data}
+          paramName={this.state.paramNames[10]}
+        />
       </div>
     );
   }
