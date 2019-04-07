@@ -10,7 +10,7 @@ const blue = "#52b6ca";
 class LineGraph extends Component {
   state = {
     // svg path command for graph
-    values: null,
+    lines: [],
     // d3 helpers
     xScale: d3.scaleTime().range([margin.left, width - margin.right]),
     yScale: d3.scaleLinear().range([height - margin.bottom, margin.top]),
@@ -37,15 +37,28 @@ class LineGraph extends Component {
     xScale.domain(timeDomain);
     yScale.domain([0, tempMax]);
 
-    // calculate line for value
-    lineGenerator.x(d => xScale(d.ts));
-    lineGenerator.y(d => yScale(d.rel_speed));
-    lineGenerator.curve(d3.curveBasis);
-    const values = lineGenerator(data);
-    return { values };
+    // calculate lines for all passed values
+    let lines = [];
+    for (var item of nextProps.selectedParams) {
+      lineGenerator.x(d => xScale(d.ts));
+      lineGenerator.y(d => yScale(d[item]));
+      lineGenerator.curve(d3.curveBasis);
+      const lineValues = lineGenerator(data);
+      lines.push(
+        <path
+          d={lineValues}
+          fill="none"
+          stroke={nextProps.monochrome ? "#282c34" : blue}
+          strokeWidth="2"
+          key={item.ts}
+        />
+      );
+    }
+    return { lines };
   }
 
   componentDidUpdate() {
+    console.log(this.state);
     d3.select(this.refs.xAxis).call(this.xAxis);
     d3.select(this.refs.yAxis).call(this.yAxis);
   }
@@ -53,12 +66,7 @@ class LineGraph extends Component {
   render() {
     return (
       <svg width={width} height={height}>
-        <path
-          d={this.state.values}
-          fill="none"
-          stroke={this.props.monochrome ? "#282c34" : blue}
-          strokeWidth="2"
-        />
+        {this.state.lines}
         <g>
           <g
             ref="xAxis"

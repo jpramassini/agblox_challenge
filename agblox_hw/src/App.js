@@ -9,7 +9,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedParams: {},
+      selectedParams: ["profile_speed"],
       paramNames: [],
       monochrome: true
     };
@@ -66,7 +66,7 @@ class App extends Component {
         </header>{" "}
         <LineGraph
           data={this.state.data}
-          paramName={this.state.paramNames[10]}
+          selectedParams={this.state.selectedParams}
           monochrome={this.state.monochrome}
         />
         <label>Color</label>
