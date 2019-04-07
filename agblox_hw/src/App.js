@@ -11,9 +11,10 @@ class App extends Component {
     this.state = {
       selectedParams: {},
       paramNames: [],
-      color: true
+      monochrome: true
     };
     this.updateData = this.updateData.bind(this);
+    this.handleCheck = this.handleCheck.bind(this);
   }
 
   parseData() {
@@ -53,6 +54,10 @@ class App extends Component {
     this.parseData();
   }
 
+  handleCheck(changeEvent) {
+    this.setState({ monochrome: !this.state.monochrome });
+  }
+
   render() {
     return (
       <div className="App">
@@ -62,7 +67,10 @@ class App extends Component {
         <LineGraph
           data={this.state.data}
           paramName={this.state.paramNames[10]}
+          monochrome={this.state.monochrome}
         />
+        <label>Color</label>
+        <input type="checkbox" onChange={this.handleCheck} />
       </div>
     );
   }

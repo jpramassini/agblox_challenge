@@ -53,7 +53,12 @@ class LineGraph extends Component {
   render() {
     return (
       <svg width={width} height={height}>
-        <path d={this.state.values} fill="none" stroke={red} strokeWidth="2" />
+        <path
+          d={this.state.values}
+          fill="none"
+          stroke={this.props.monochrome ? "#282c34" : blue}
+          strokeWidth="2"
+        />
         <g>
           <g
             ref="xAxis"
