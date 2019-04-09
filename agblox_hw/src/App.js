@@ -9,9 +9,9 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedParams: ["speed_mph"],
+      selectedParams: ["profile_speed", "speed_mph"],
       paramNames: [],
-      monochrome: true,
+      monochrome: false,
       splitData: {}
     };
     this.updateData = this.updateData.bind(this);
@@ -46,7 +46,7 @@ class App extends Component {
         splitData[name].push({ time: item.ts, value: item[name] });
       }
     }
-    this.setState({ splitData });
+    return splitData;
   }
 
   updateData(res) {
@@ -61,8 +61,7 @@ class App extends Component {
     console.log(data);
     this.setState({ data });
     this.setParamNames();
-    this.splitData();
-    console.log(this.state);
+    this.setState({ splitData: this.splitData() });
   }
 
   componentWillMount() {
@@ -74,20 +73,66 @@ class App extends Component {
   }
 
   render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <h2>AgBlox Data Visualization Challenge</h2>
-        </header>{" "}
-        <LineGraph
-          monochrome={this.state.monochrome}
-          data={this.state.splitData[this.state.selectedParams[0]]}
-          selectedParams={this.state.selectedParams}
-        />
-        <label>Color</label>
-        <input type="checkbox" onChange={this.handleCheck} />
-      </div>
-    );
+    console.log(this.state);
+    console.log(Object.entries(this.state.splitData).length);
+    if (Object.entries(this.state.splitData).length !== 0) {
+      return (
+        <div className="App">
+          <header className="App-header">
+            <h2>AgBlox Data Visualization Challenge</h2>
+          </header>{" "}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 3fr",
+              gridGap: "25px",
+              height: "80vh",
+              width: "95vw",
+              marginLeft: "2.5vw",
+              marginRight: "2.5vw",
+              marginTop: "2.5vh",
+              marginBottom: "2.5vh"
+            }}
+          >
+            <div
+              style={{
+                borderRadius: "20px",
+                boxShadow:
+                  "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)"
+              }}
+            >
+              <h2>Options</h2>
+              <label>Monochrome Mode</label>
+              <input
+                type="checkbox"
+                value={this.state.monochrome}
+                onChange={this.handleCheck}
+              />
+            </div>
+            <LineGraph
+              style={{
+                borderRadius: "20px",
+                boxShadow:
+                  "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)"
+              }}
+              monochrome={this.state.monochrome}
+              data={this.state.splitData}
+              selectedParams={this.state.selectedParams}
+            />
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="App">
+          <header className="App-header">
+            <h2>AgBlox Data Visualization Challenge</h2>
+          </header>{" "}
+          <label>Color</label>
+          <input type="checkbox" onChange={this.handleCheck} />
+        </div>
+      );
+    }
   }
 }
 
