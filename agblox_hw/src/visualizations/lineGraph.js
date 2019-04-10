@@ -29,11 +29,39 @@ var transition = {
   easing: "cubic-in-out"
 };
 
+var getTitle = selectedParams => {
+  let title = "";
+  for (var name of selectedParams) {
+    if (
+      // if element is the last on in the array, don't add comma.
+      selectedParams[selectedParams.length - 1] === name
+    ) {
+      title += `${name}`;
+    } else {
+      title += `${name}, `;
+    }
+  }
+  console.log(title);
+  return title;
+};
+
 class LineGraph extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      slicedData: null
+      slicedData: null,
+      layout: {
+        yaxis: {
+          fixedrange: true
+        },
+        transition: transition,
+        title: ""
+      },
+      config: {
+        scrollZoom: true,
+        displayModeBar: false,
+        responsive: true
+      }
     };
     this.computePlots = this.computePlots.bind(this);
   }
@@ -68,20 +96,14 @@ class LineGraph extends Component {
     return plots;
   }
 
-  getTitle() {
-    let title = "";
-    for (var name of this.props.selectedParams) {
-      if (
-        // if element is the last on in the array, don't add comma.
-        this.props.selectedParams[this.props.selectedParams.length - 1] === name
-      ) {
-        title += `${name}`;
-      } else {
-        title += `${name}, `;
-      }
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (!nextProps) return null;
+    if (nextProps.selectedParams) {
+      var layout = { ...prevState.layout };
+      layout.title = getTitle(nextProps.selectedParams);
+      return { layout };
     }
-    console.log(title);
-    return title;
+    return null;
   }
 
   /*componentDidMount() {
@@ -93,7 +115,6 @@ class LineGraph extends Component {
   render() {
     if (this.props.data) {
       console.log(this.props);
-      var title = this.getTitle();
       if (this.props.selectedParams.length > 1) {
         return (
           <div style={this.props.style}>
@@ -107,13 +128,7 @@ class LineGraph extends Component {
                 marginLeft: "1%"
               }}
               data={this.computePlots()}
-              layout={{
-                yaxis: {
-                  fixedrange: true
-                },
-                transition: transition,
-                title: title
-              }}
+              layout={this.state.layout}
               config={{
                 scrollZoom: true,
                 displayModeBar: false,
@@ -149,13 +164,7 @@ class LineGraph extends Component {
                   }
                 }
               ]}
-              layout={{
-                yaxis: {
-                  fixedrange: true
-                },
-                transition: transition,
-                title: title
-              }}
+              layout={this.state.layout}
               config={{
                 scrollZoom: true,
                 displayModeBar: false,
