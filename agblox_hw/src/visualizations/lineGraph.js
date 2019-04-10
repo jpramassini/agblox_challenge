@@ -5,8 +5,24 @@ import * as d3 from "d3";
 const width = 1000;
 const height = 800;
 const margin = { top: 20, right: 5, bottom: 20, left: 35 };
-const red = "#eb6a5b";
-const blue = "#52b6ca";
+
+const colors = [
+  "#4286f4", // blue
+  "#eb6a5b", // red
+  "#0ece50", // green
+  "#fcea25", // yellow
+  "#fc9725", // orange
+  "#282c34", // off - black
+  "#757171", // dark grey
+  "#6316ce", // indigo
+  "#e03edb", // magenta
+  "#49ccbc", // aqua
+  "#1e196d", // dark blue
+  "#541525", // burgundy
+  "#155430", // forest green
+  "#542515", // brown
+  "#996f38" // tan
+];
 
 var transition = {
   duration: 250,
@@ -19,53 +35,65 @@ class LineGraph extends Component {
     this.state = {
       slicedData: null
     };
-  }
-
-  // This is for showing only sliced data, could be controlled with a slider later.
-  /*static getDerivedStateFromProps(props, prevState) {
-    if (!props.data) return null;
-    let slicedData = props.data.slice(0, 100);
-    return { slicedData };
-  }*/
-
-  componentDidUpdate(prevProps) {
-    console.log(this.props);
-    if (this.props.data) {
-      //this.computePlots();
-    }
+    this.computePlots = this.computePlots.bind(this);
   }
 
   computePlots() {
-    if (this.props.data !== {}) {
-      var plots = [];
-      console.log(this.props.data);
-      for (var name of this.props.selectedParams) {
-        let plot = {
-          x: this.props.data[name].map(item => {
-            return item.time;
-          }),
-          y: this.props.data[name].map(item => {
-            return item.value;
-          }),
-          mode: "markers",
-          text: this.props.data[name].map(item => {
-            return `<b>Timestamp:</b> ${
-              item.time
-            }<br><b>Parameter:</b> ${name}`;
-          }),
-          marker: { color: this.props.monochrome ? "#282c34" : red }
-        };
-        plots.push(plot);
-      }
-      console.log(plots);
-    } else {
-      return <div />;
+    var plots = [];
+    console.log(this.props.selectedParams);
+    for (var i = 0; i < this.props.selectedParams.length; i++) {
+      console.log(i);
+      let paramName = this.props.selectedParams[i];
+      console.log(typeof paramName);
+      let plot = {
+        x: this.props.data[paramName].map(item => {
+          return item.time;
+        }),
+        y: this.props.data[paramName].map((item, index) => {
+          if (paramName.includes("speed") && paramName !== "ref_speed") {
+            return item.value * this.props.data["ref_speed"][index].value;
+          }
+          return item.value;
+        }),
+        name: paramName,
+        mode: "markers",
+        marker: {
+          color: this.props.monochrome ? "#282c34" : colors[i],
+          maxdisplayed: 1000
+        }
+      };
+      plots.push(plot);
     }
+    console.log(plots);
+    return plots;
   }
+
+  getTitle() {
+    let title = "";
+    for (var name of this.props.selectedParams) {
+      if (
+        // if element is the last on in the array, don't add comma.
+        this.props.selectedParams[this.props.selectedParams.length - 1] === name
+      ) {
+        title += `${name}`;
+      } else {
+        title += `${name}, `;
+      }
+    }
+    console.log(title);
+    return title;
+  }
+
+  /*componentDidMount() {
+    if (this.props.data) {
+      this.computePlots();
+    }
+  }*/
 
   render() {
     if (this.props.data) {
       console.log(this.props);
+      var title = this.getTitle();
       if (this.props.selectedParams.length > 1) {
         return (
           <div style={this.props.style}>
@@ -78,29 +106,13 @@ class LineGraph extends Component {
                 marginRight: "1%",
                 marginLeft: "1%"
               }}
-              data={[
-                {
-                  x: this.props.data[this.props.selectedParams[0]].map(item => {
-                    return item.value;
-                  }),
-                  y: this.props.data[this.props.selectedParams[1]].map(item => {
-                    return item.value * 69.32;
-                  }),
-                  mode: "markers",
-                  marker: {
-                    color: this.props.monochrome ? "#282c34" : red,
-                    maxdisplayed: 3000
-                  }
-                }
-              ]}
+              data={this.computePlots()}
               layout={{
                 yaxis: {
                   fixedrange: true
                 },
                 transition: transition,
-                title: `${this.props.selectedParams[0]} vs. ${
-                  this.props.selectedParams[1]
-                }`
+                title: title
               }}
               config={{
                 scrollZoom: true,
@@ -132,7 +144,7 @@ class LineGraph extends Component {
                   }),
                   mode: "markers",
                   marker: {
-                    color: this.props.monochrome ? "#282c34" : red,
+                    color: this.props.monochrome ? "#282c34" : "#4286f4",
                     maxdisplayed: 3000
                   }
                 }
@@ -142,7 +154,7 @@ class LineGraph extends Component {
                   fixedrange: true
                 },
                 transition: transition,
-                title: `${this.props.selectedParams[0]}`
+                title: title
               }}
               config={{
                 scrollZoom: true,

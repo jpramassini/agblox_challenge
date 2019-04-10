@@ -9,7 +9,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedParams: ["profile_speed", "speed_mph"],
+      selectedParams: ["rel_speed", "ref_speed", "speed_mph", "imputed"],
       paramNames: [],
       monochrome: false,
       splitData: {}
