@@ -45,11 +45,40 @@ var getTitle = selectedParams => {
   return title;
 };
 
+var computePlots = props => {
+  var plots = [];
+  console.log(props);
+  for (var i = 0; i < props.selectedParams.length; i++) {
+    console.log(i);
+    let paramName = props.selectedParams[i];
+    console.log(typeof paramName);
+    let plot = {
+      x: props.data[paramName].map(item => {
+        return item.time;
+      }),
+      y: props.data[paramName].map((item, index) => {
+        if (paramName.includes("speed") && paramName !== "ref_speed") {
+          return item.value * props.data["ref_speed"][index].value;
+        }
+        return item.value;
+      }),
+      name: paramName,
+      mode: "markers",
+      marker: {
+        color: props.monochrome ? "#282c34" : colors[i],
+        maxdisplayed: 1000
+      }
+    };
+    plots.push(plot);
+  }
+  console.log(plots);
+  return plots;
+};
+
 class LineGraph extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      slicedData: null,
       layout: {
         yaxis: {
           fixedrange: true
@@ -63,37 +92,6 @@ class LineGraph extends Component {
         responsive: true
       }
     };
-    this.computePlots = this.computePlots.bind(this);
-  }
-
-  computePlots() {
-    var plots = [];
-    console.log(this.props.selectedParams);
-    for (var i = 0; i < this.props.selectedParams.length; i++) {
-      console.log(i);
-      let paramName = this.props.selectedParams[i];
-      console.log(typeof paramName);
-      let plot = {
-        x: this.props.data[paramName].map(item => {
-          return item.time;
-        }),
-        y: this.props.data[paramName].map((item, index) => {
-          if (paramName.includes("speed") && paramName !== "ref_speed") {
-            return item.value * this.props.data["ref_speed"][index].value;
-          }
-          return item.value;
-        }),
-        name: paramName,
-        mode: "markers",
-        marker: {
-          color: this.props.monochrome ? "#282c34" : colors[i],
-          maxdisplayed: 1000
-        }
-      };
-      plots.push(plot);
-    }
-    console.log(plots);
-    return plots;
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -101,7 +99,8 @@ class LineGraph extends Component {
     if (nextProps.selectedParams) {
       var layout = { ...prevState.layout };
       layout.title = getTitle(nextProps.selectedParams);
-      return { layout };
+      var data = computePlots(nextProps);
+      return { layout, data };
     }
     return null;
   }
@@ -127,13 +126,9 @@ class LineGraph extends Component {
                 marginRight: "1%",
                 marginLeft: "1%"
               }}
-              data={this.computePlots()}
+              data={this.state.data}
               layout={this.state.layout}
-              config={{
-                scrollZoom: true,
-                displayModeBar: false,
-                responsive: true
-              }}
+              config={this.state.config}
             />
           </div>
         );
@@ -149,27 +144,9 @@ class LineGraph extends Component {
                 marginRight: "1%",
                 marginLeft: "1%"
               }}
-              data={[
-                {
-                  x: this.props.data[this.props.selectedParams[0]].map(item => {
-                    return item.time;
-                  }),
-                  y: this.props.data[this.props.selectedParams[0]].map(item => {
-                    return item.value * 69.32;
-                  }),
-                  mode: "markers",
-                  marker: {
-                    color: this.props.monochrome ? "#282c34" : "#4286f4",
-                    maxdisplayed: 3000
-                  }
-                }
-              ]}
+              data={this.state.data}
               layout={this.state.layout}
-              config={{
-                scrollZoom: true,
-                displayModeBar: false,
-                responsive: true
-              }}
+              config={this.state.config}
             />
           </div>
         );
