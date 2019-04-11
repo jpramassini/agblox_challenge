@@ -102,7 +102,10 @@ class App extends Component {
               }}
             >
               <h2>Options</h2>
-              <ParameterChooser paramNames={this.state.paramNames} />
+              <ParameterChooser
+                paramNames={this.state.paramNames}
+                selectedParams={this.state.selectedParams}
+              />
               <label>Monochrome Mode</label>
               <input
                 type="checkbox"

@@ -8,6 +8,7 @@ const ParameterChooser = props => {
       return (
         <div
           style={{
+            marginBottom: "5%",
             borderRadius: "7px",
             boxShadow: "0 2px 4px 0 rgba(0,0,0,0.10)",
             justifySelf: "center",
@@ -17,13 +18,18 @@ const ParameterChooser = props => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            fontFamily: "Roboto",
             fontWeight: "700"
           }}
           key={name}
         >
           <label>{name}</label>
-          <input type="checkbox" name={`param${counter++}`} value={name} />
+          <input
+            type="checkbox"
+            name={name}
+            value={name}
+            checked={props.selectedParams.includes(name)}
+            //onClick={}
+          />
         </div>
       );
     });
