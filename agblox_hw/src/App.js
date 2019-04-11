@@ -84,7 +84,7 @@ class App extends Component {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 3fr",
+              gridTemplateColumns: "1fr 2fr",
               gridGap: "25px",
               height: "80vh",
               width: "95vw",
@@ -102,6 +102,7 @@ class App extends Component {
               }}
             >
               <h2>Options</h2>
+              <ParameterChooser paramNames={this.state.paramNames} />
               <label>Monochrome Mode</label>
               <input
                 type="checkbox"

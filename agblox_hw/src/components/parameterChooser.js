@@ -2,20 +2,46 @@ import React from "react";
 
 const ParameterChooser = props => {
   console.log(props);
-  if (props.data !== undefined) {
-    let paramNames = Object.keys(props.data[0]);
-    paramNames.shift(); // Pop timestamp off, not hideable by user
-    console.log(paramNames);
+  if (props.paramNames) {
     var counter;
-    const listItems = paramNames.map(name => {
+    const listItems = props.paramNames.map(name => {
       return (
-        <li key={name}>
-          <input type="checkbox" name={`param${counter++}`} value={name} />
+        <div
+          style={{
+            borderRadius: "7px",
+            boxShadow: "0 2px 4px 0 rgba(0,0,0,0.10)",
+            justifySelf: "center",
+            width: "100%",
+            height: "100%",
+            textAlign: "center",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "Roboto",
+            fontWeight: "700"
+          }}
+          key={name}
+        >
           <label>{name}</label>
-        </li>
+          <input type="checkbox" name={`param${counter++}`} value={name} />
+        </div>
       );
     });
-    return <ul>{listItems}</ul>;
+    return (
+      <div
+        style={{
+          height: "66%",
+          width: "85%",
+          margin: "auto",
+          display: "grid",
+          gridGap: "1em",
+          gridTemplateColumns: "1fr 1fr",
+          gridAutoRows: "1fr"
+        }}
+      >
+        {listItems}
+      </div>
+    );
   } else {
     return <div />;
   }
