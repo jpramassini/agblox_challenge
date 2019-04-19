@@ -47,7 +47,7 @@ var getTitle = selectedParams => {
 
 var computePlots = props => {
   var plots = [];
-  console.log(props);
+  console.log(props.selectedParams);
   for (var i = 0; i < props.selectedParams.length; i++) {
     console.log(i);
     let paramName = props.selectedParams[i];

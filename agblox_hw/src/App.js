@@ -15,7 +15,8 @@ class App extends Component {
       splitData: {}
     };
     this.updateData = this.updateData.bind(this);
-    this.handleCheck = this.handleCheck.bind(this);
+    this.handleColorChecked = this.handleColorChecked.bind(this);
+    this.handleParamChecked = this.handleParamChecked.bind(this);
   }
 
   parseData() {
@@ -64,11 +65,22 @@ class App extends Component {
     this.setState({ splitData: this.splitData() });
   }
 
+  handleParamChecked(event) {
+    let name = event.target.name;
+    let tempArr = this.state.selectedParams;
+    if (tempArr.includes(name)) {
+      tempArr.splice(tempArr.indexOf(name), 1);
+    } else {
+      tempArr.push(name);
+    }
+    this.setState({ selectedParams: tempArr });
+  }
+
   componentWillMount() {
     this.parseData();
   }
 
-  handleCheck(changeEvent) {
+  handleColorChecked(changeEvent) {
     this.setState({ monochrome: !this.state.monochrome });
   }
 
@@ -105,12 +117,13 @@ class App extends Component {
               <ParameterChooser
                 paramNames={this.state.paramNames}
                 selectedParams={this.state.selectedParams}
+                onChecked={this.handleParamChecked}
               />
               <label>Monochrome Mode</label>
               <input
                 type="checkbox"
                 value={this.state.monochrome}
-                onChange={this.handleCheck}
+                onChange={this.handleColorChecked}
               />
             </div>
             <LineGraph
@@ -133,7 +146,7 @@ class App extends Component {
             <h2>AgBlox Data Visualization Challenge</h2>
           </header>{" "}
           <label>Color</label>
-          <input type="checkbox" onChange={this.handleCheck} />
+          <input type="checkbox" onChange={this.handleColorChecked} />
         </div>
       );
     }

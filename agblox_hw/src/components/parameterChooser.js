@@ -28,7 +28,7 @@ const ParameterChooser = props => {
             name={name}
             value={name}
             checked={props.selectedParams.includes(name)}
-            //onClick={}
+            onChange={props.onChecked}
           />
         </div>
       );
