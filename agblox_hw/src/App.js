@@ -13,7 +13,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedParams: ["speed_mph", "rel_speed"],
+      selectedParams: ["speed_mph", "snow_rate_in_hr"],
       paramNames: [],
       monochrome: false,
       splitData: {},
@@ -40,16 +40,10 @@ class App extends Component {
     });
   }
 
-  setDateRange() {
-    let dates = this.state.data.map(item => {
-      return item.ts;
-    });
-    let min = new Date(Math.min.apply(null, dates));
-    let max = new Date(Math.max.apply(null, dates));
-
+  setDateRange(min, max) {
     let dateRange = { min, max };
     this.setState({ dateRange });
-    console.log(this.state);
+    console.log(dateRange);
   }
 
   setParamNames() {
@@ -83,6 +77,12 @@ class App extends Component {
     this.setState({ data });
     this.setParamNames();
     this.setState({ splitData: this.splitData() });
+    let times = this.state.splitData.speed_mph.map(item => {
+      return item.time;
+    });
+    this.setState({
+      dateRange: { min: times[0], max: times[times.length - 1] }
+    });
     console.log(this.state.splitData);
   }
 
@@ -107,7 +107,10 @@ class App extends Component {
 
   render() {
     console.log(this.state);
-    if (Object.entries(this.state.splitData).length !== 0) {
+    if (
+      Object.entries(this.state.splitData).length !== 0 &&
+      this.state.dateRange.min !== null
+    ) {
       return (
         <div className="App">
           <header className="App-header">
@@ -140,12 +143,14 @@ class App extends Component {
                 selectedParams={this.state.selectedParams}
                 onChecked={this.handleParamChecked}
               />
+              <h4 style={{ marginTop: "10%" }}>Date Range</h4>
               <YearSlider
                 times={this.state.splitData.speed_mph.map(item => {
                   return item.time;
                 })}
+                setDateRange={this.setDateRange}
               />
-              <label>Monochrome Mode</label>
+              <label style={{ fontWeight: 700 }}>Monochrome Mode</label>
               <input
                 type="checkbox"
                 value={this.state.monochrome}

@@ -26,7 +26,9 @@ export default class YearSlider extends Component {
   }
 
   handleChange(value) {
-    console.log(value);
+    let minDate = new Date(value[0]);
+    let maxDate = new Date(value[1]);
+    this.props.setDateRange(minDate, maxDate);
     this.setState({ value });
   }
 
@@ -35,10 +37,14 @@ export default class YearSlider extends Component {
   }
 
   render() {
-    console.log(this.state);
     return (
       <Range
-        style={{ width: "90%", margin: "5%" }}
+        style={{
+          width: "85%",
+          marginLeft: "auto",
+          marginRight: "auto",
+          marginBottom: "7%"
+        }}
         min={this.state.min}
         max={this.state.max}
         value={this.state.value}
@@ -48,9 +54,10 @@ export default class YearSlider extends Component {
           placement: "bottom",
           prefixCls: "rc-slider-tooltip"
         }}
+        pushable={true}
         tipFormatter={value => {
           let date = new Date(value);
-          let dateString = date.toString();
+          let dateString = date.toUTCString();
           return dateString;
         }}
       />

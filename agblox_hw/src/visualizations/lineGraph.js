@@ -49,14 +49,21 @@ var computePlots = props => {
     console.log(i);
     let paramName = props.selectedParams[i];
     console.log(typeof paramName);
+    console.log(props.dateRange);
+    let timeFilteredData = props.data[paramName].filter(item => {
+      return item.time > props.dateRange.min && item.time < props.dateRange.max;
+    });
+    console.log(timeFilteredData);
     let plot = {
-      x: props.data[paramName].map(item => {
+      x: timeFilteredData.map(item => {
         return item.time;
       }),
-      y: props.data[paramName].map((item, index) => {
+      y: timeFilteredData.map((item, index) => {
         if (paramName.includes("speed") && paramName !== "ref_speed") {
           // Making speed values actual speed based on ref_speed.
           return item.value * props.data["ref_speed"][index].value;
+        } else if (paramName.includes("ref_speed")) {
+          return item.value;
         } else {
           return item.value * 100; // Expanding other sets normalized from 0 to 1 to 0 to 100 to better fit graph.
         }
@@ -79,16 +86,29 @@ class LineGraph extends Component {
     super(props);
     this.state = {
       layout: {
+        xaxis: {
+          autoscale: true
+        },
         yaxis: {
-          fixedrange: true
+          fixedrange: true,
+          autoscale: true
         },
         transition: transition,
-        title: ""
+        title: "",
+        dataRevision: 0
       },
       config: {
         scrollZoom: true,
-        displayModeBar: false,
-        responsive: true
+        //displayModeBar: false,
+        autoScale: true,
+        responsive: true,
+        displaylogo: false,
+        modeBarButtonsToRemove: [
+          "toImage",
+          "select2d",
+          "lasso2d",
+          "toggleSpikelines"
+        ]
       }
     };
   }
