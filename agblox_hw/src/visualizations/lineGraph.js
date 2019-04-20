@@ -2,10 +2,6 @@ import React, { Component } from "react";
 import Plot from "react-plotly.js";
 import * as d3 from "d3";
 
-const width = 1000;
-const height = 800;
-const margin = { top: 20, right: 5, bottom: 20, left: 35 };
-
 const colors = [
   "#4286f4", // blue
   "#eb6a5b", // red
@@ -58,9 +54,11 @@ var computePlots = props => {
       }),
       y: props.data[paramName].map((item, index) => {
         if (paramName.includes("speed") && paramName !== "ref_speed") {
+          // Making speed values actual speed based on ref_speed.
           return item.value * props.data["ref_speed"][index].value;
+        } else {
+          return item.value * 100; // Expanding other sets normalized from 0 to 1 to 0 to 100 to better fit graph.
         }
-        return item.value;
       }),
       name: paramName,
       mode: "markers",
@@ -114,43 +112,23 @@ class LineGraph extends Component {
   render() {
     if (this.props.data) {
       console.log(this.props);
-      if (this.props.selectedParams.length > 1) {
-        return (
-          <div style={this.props.style}>
-            <Plot
-              style={{
-                height: "98%",
-                width: "98%",
-                marginTop: "1%",
-                marginBottom: "1%",
-                marginRight: "1%",
-                marginLeft: "1%"
-              }}
-              data={this.state.data}
-              layout={this.state.layout}
-              config={this.state.config}
-            />
-          </div>
-        );
-      } else {
-        // Else, use time as x-axis value
-        return (
-          <div style={this.props.style}>
-            <Plot
-              style={{
-                height: "98%",
-                marginTop: "1%",
-                marginBottom: "1%",
-                marginRight: "1%",
-                marginLeft: "1%"
-              }}
-              data={this.state.data}
-              layout={this.state.layout}
-              config={this.state.config}
-            />
-          </div>
-        );
-      }
+      return (
+        <div style={this.props.style}>
+          <Plot
+            style={{
+              height: "98%",
+              width: "98%",
+              marginTop: "1%",
+              marginBottom: "1%",
+              marginRight: "1%",
+              marginLeft: "1%"
+            }}
+            data={this.state.data}
+            layout={this.state.layout}
+            config={this.state.config}
+          />
+        </div>
+      );
     } else {
       return <div />;
     }

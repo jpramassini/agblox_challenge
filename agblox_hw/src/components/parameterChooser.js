@@ -8,7 +8,7 @@ const ParameterChooser = props => {
       return (
         <div
           style={{
-            marginBottom: "5%",
+            padding: "1%",
             borderRadius: "7px",
             boxShadow: "0 2px 4px 0 rgba(0,0,0,0.10)",
             justifySelf: "center",
@@ -22,7 +22,9 @@ const ParameterChooser = props => {
           }}
           key={name}
         >
-          <label>{name}</label>
+          <label style={{ wordBreak: "word-wrap", fontSize: "1em" }}>
+            {name}
+          </label>
           <input
             type="checkbox"
             name={name}
@@ -36,12 +38,13 @@ const ParameterChooser = props => {
     return (
       <div
         style={{
-          height: "66%",
+          height: "75%",
           width: "85%",
           margin: "auto",
+          marginBottom: "5%",
           display: "grid",
-          gridGap: "1em",
-          gridTemplateColumns: "1fr 1fr",
+          gridGap: "1.5em",
+          gridTemplateColumns: "1fr",
           gridAutoRows: "1fr"
         }}
       >

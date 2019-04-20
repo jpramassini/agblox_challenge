@@ -1,9 +1,12 @@
 import React, { Component } from "react";
 import * as d3 from "d3";
 import Papa from "papaparse";
+import { Range } from "rc-slider";
 import ParameterChooser from "./components/parameterChooser";
 import LineGraph from "./visualizations/lineGraph";
 import "./App.css";
+
+const isMobile = window.innerWidth <= 500;
 
 class App extends Component {
   constructor(props) {
@@ -12,11 +15,16 @@ class App extends Component {
       selectedParams: ["speed_mph", "rel_speed"],
       paramNames: [],
       monochrome: false,
-      splitData: {}
+      splitData: {},
+      dateRange: {
+        min: null,
+        max: null
+      }
     };
     this.updateData = this.updateData.bind(this);
     this.handleColorChecked = this.handleColorChecked.bind(this);
     this.handleParamChecked = this.handleParamChecked.bind(this);
+    this.setDateRange = this.setDateRange.bind(this);
   }
 
   parseData() {
@@ -29,6 +37,17 @@ class App extends Component {
       dynamicTyping: true,
       complete: this.updateData
     });
+  }
+
+  setDateRange() {
+    let dates = this.state.splitData.speed_mph.map(item => {
+      return item.time;
+    });
+    let min = new Date(Math.min.apply(null, dates));
+    let max = new Date(Math.max.apply(null, dates));
+
+    this.setState({ min, max });
+    console.log(this.state);
   }
 
   setParamNames() {
@@ -63,6 +82,8 @@ class App extends Component {
     this.setState({ data });
     this.setParamNames();
     this.setState({ splitData: this.splitData() });
+    console.log(this.state.splitData);
+    this.setDateRange();
   }
 
   handleParamChecked(event) {
@@ -86,7 +107,6 @@ class App extends Component {
 
   render() {
     console.log(this.state);
-    console.log(Object.entries(this.state.splitData).length);
     if (Object.entries(this.state.splitData).length !== 0) {
       return (
         <div className="App">
@@ -96,21 +116,22 @@ class App extends Component {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 2fr",
+              gridTemplateColumns: `${isMobile ? "1fr" : "1fr 3fr"}`,
               gridGap: "25px",
-              height: "80vh",
+              height: "85vh",
               width: "95vw",
               marginLeft: "2.5vw",
               marginRight: "2.5vw",
-              marginTop: "2.5vh",
-              marginBottom: "2.5vh"
+              marginTop: "2vh",
+              marginBottom: "2vh"
             }}
           >
             <div
               style={{
                 borderRadius: "20px",
                 boxShadow:
-                  "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)"
+                  "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)",
+                minWidth: "350px"
               }}
             >
               <h2>Options</h2>
@@ -130,11 +151,13 @@ class App extends Component {
               style={{
                 borderRadius: "20px",
                 boxShadow:
-                  "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)"
+                  "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)",
+                minWidth: "350px"
               }}
               monochrome={this.state.monochrome}
               data={this.state.splitData}
               selectedParams={this.state.selectedParams}
+              dateRange={this.state.dateRange}
             />
           </div>
         </div>
