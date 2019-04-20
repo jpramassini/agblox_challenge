@@ -4,6 +4,7 @@ import Papa from "papaparse";
 import { Range } from "rc-slider";
 import ParameterChooser from "./components/parameterChooser";
 import LineGraph from "./visualizations/lineGraph";
+import YearSlider from "./components/yearSlider";
 import "./App.css";
 
 const isMobile = window.innerWidth <= 500;
@@ -40,13 +41,14 @@ class App extends Component {
   }
 
   setDateRange() {
-    let dates = this.state.splitData.speed_mph.map(item => {
-      return item.time;
+    let dates = this.state.data.map(item => {
+      return item.ts;
     });
     let min = new Date(Math.min.apply(null, dates));
     let max = new Date(Math.max.apply(null, dates));
 
-    this.setState({ min, max });
+    let dateRange = { min, max };
+    this.setState({ dateRange });
     console.log(this.state);
   }
 
@@ -78,12 +80,10 @@ class App extends Component {
       item.ts = parseDate(tsOriginal);
       return item;
     });
-    console.log(data);
     this.setState({ data });
     this.setParamNames();
     this.setState({ splitData: this.splitData() });
     console.log(this.state.splitData);
-    this.setDateRange();
   }
 
   handleParamChecked(event) {
@@ -139,6 +139,11 @@ class App extends Component {
                 paramNames={this.state.paramNames}
                 selectedParams={this.state.selectedParams}
                 onChecked={this.handleParamChecked}
+              />
+              <YearSlider
+                times={this.state.splitData.speed_mph.map(item => {
+                  return item.time;
+                })}
               />
               <label>Monochrome Mode</label>
               <input

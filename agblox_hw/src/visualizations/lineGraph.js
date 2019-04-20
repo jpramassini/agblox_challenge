@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Plot from "react-plotly.js";
 import * as d3 from "d3";
+import _ from "lodash";
 
 const colors = [
   "#4286f4", // blue
