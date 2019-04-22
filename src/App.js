@@ -90,7 +90,10 @@ class App extends Component {
     let name = event.target.name;
     let tempArr = this.state.selectedParams;
     if (tempArr.includes(name)) {
-      tempArr.splice(tempArr.indexOf(name), 1);
+      // Don't allow last item to be removed.
+      if (tempArr.length !== 1) {
+        tempArr.splice(tempArr.indexOf(name), 1);
+      }
     } else {
       tempArr.push(name);
     }
@@ -134,7 +137,8 @@ class App extends Component {
                 borderRadius: "20px",
                 boxShadow:
                   "0 15px 30px 0 rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08)",
-                minWidth: "350px"
+                minWidth: "350px",
+                marginBottom: "2vh"
               }}
             >
               <h2>Options</h2>
@@ -155,6 +159,7 @@ class App extends Component {
                 type="checkbox"
                 value={this.state.monochrome}
                 onChange={this.handleColorChecked}
+                style={{ marginBottom: 10 }}
               />
             </div>
             <LineGraph

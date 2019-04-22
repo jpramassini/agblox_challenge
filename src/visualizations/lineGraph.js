@@ -28,7 +28,13 @@ var transition = {
 
 var getTitle = selectedParams => {
   let title = "";
+  let count = 0;
   for (var name of selectedParams) {
+    count++;
+    if (count > 4) {
+      title += "...";
+      return title;
+    }
     if (
       // if element is the last on in the array, don't add comma.
       selectedParams[selectedParams.length - 1] === name
