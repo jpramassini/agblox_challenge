@@ -8,15 +8,15 @@ self.__precacheManifest = [
     "url": "/agblox_challenge/static/js/runtime~main.7fcffeec.js"
   },
   {
-    "revision": "500a3bbf755dfa4088f9",
-    "url": "/agblox_challenge/static/js/main.f1586c50.chunk.js"
+    "revision": "4e9e45992a741d9672b5",
+    "url": "/agblox_challenge/static/js/main.2903414e.chunk.js"
   },
   {
     "revision": "4e67f925b9d13edf2076",
     "url": "/agblox_challenge/static/js/2.39829238.chunk.js"
   },
   {
-    "revision": "500a3bbf755dfa4088f9",
+    "revision": "4e9e45992a741d9672b5",
     "url": "/agblox_challenge/static/css/main.95b1ef4f.chunk.css"
   },
   {
@@ -24,7 +24,7 @@ self.__precacheManifest = [
     "url": "/agblox_challenge/static/css/2.0f6b40c4.chunk.css"
   },
   {
-    "revision": "89d3fb54341586ffe83ffc2ddb4eae2c",
+    "revision": "42cbdb5ca6e205766b0c0ebac0fb8cc1",
     "url": "/agblox_challenge/index.html"
   }
 ];

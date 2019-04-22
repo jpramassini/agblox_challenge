@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/agblox_challenge/precache-manifest.0e5c54cb26542013d3a6829012b0ef7a.js"
+  "/agblox_challenge/precache-manifest.4eb1ec8c70af7ca5022b6dc193abad87.js"
 );
 
 workbox.clientsClaim();
